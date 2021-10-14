@@ -3,3 +3,57 @@ Venmo but you mine the currency by clicking on a button repeatedly
 
 Twitter but with music
 
+Photo upload and tagging app
+
+
+Name Ideas:
+	ChromaShare
+	Colour (spelt the british way)
+	colortag
+	tagour
+	cotaglour
+	Color 
+
+An app where you upload photos, and then tag them with multiple tags. You can
+then search by tag. 
+	Features:
+		Make it social by sharing the tags or keeping them private.
+
+		Giving many tags to a photo
+
+		Looking at a tag and looking at the photos in it
+
+		Upload a photo, and then based off of the color composition
+		assign it to a tag with similar color composition
+
+		Accounts, with passwords
+
+		Reporting feature for racism, sexism, etc...
+
+		Recommended tags, it goes through all the public tags and looks
+		for ones with similar color histograms to the tags you already
+		have.
+
+		Add notes to pictures
+
+		Searching through pictures by upload date and title. notes.
+		Search by color composition.
+
+		Give the most popular color of each image as a pallette
+
+Architecture:
+[Server Written in Python           ]          [WebApp written in React ]
+[Serving the webapp with http.server]          [                        ]
+[->communicating with the webapp wi-] JSON API [                        ]
+[th a json API                      ] -------> [Jquery communicates wit-]
+[processing images with OpenCV      ]          [Server                  ]
+[storing data in MongoDB            ]          [                        ]
+
+
+This app will let people save their photos to another location. It offers more
+options for customization than default, already-installed photos apps on phones.
+Instead of putting a photo into an album on their phone, users can decide to tag
+a photo with as many relevant ideas as they want. This will let them easily access
+memories of events and locations they have visited; in addition, they can look
+for photos related to various themes.
+
