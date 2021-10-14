@@ -1,0 +1,33 @@
+These are instructions for setting up git on seasnet
+
+1. you need to make a Github Account www.github.com
+
+2. You need to generate an ssh public key. SSH is the program you use to connect
+to seasnet, and will be how you connect from seasnet to Github. Github is
+annoying and doesn't just accept username and passwords, so you need to make a
+key instead.
+
+$ ssh-keygen
+
+keep pressing enter through the prompts, and set a password for the key
+
+
+3. Then open up ~/.ssh/id_rsa.pub You will paste this into Github
+
+$ cat ~/.ssh/id_rsa.pub
+
+or use emacs, your choice
+
+4. Go to Github.com, settings > SSH and GPG Keys > new SSH Key. Paste in what you copied from
+id_rsa.pub into the text box.
+
+5. clone the repository. In seasnet, clone with
+
+$ git clone git@github.com:haoransdiao/cs35l-g.git
+
+6. to make a change to the repository do this
+
+git pull
+git commit * -m "some message"
+git push "this will prompt for the password of the key"
+
