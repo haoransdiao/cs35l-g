@@ -1,11 +1,16 @@
 import './App.css';
+import Navbar from './Navbar';
+import Hero from './Hero';
 
 function App() {
   return (
-    <div className="App">
-      <div className="Content">
-        <h1>Chroma Share</h1>
-      </div>
+    <div className="Content">
+    <div className="Navbar">
+      <Navbar/>
+    </div>
+    <div className="Hero">
+      <Hero/>
+    </div>
     </div>
   );
 }
