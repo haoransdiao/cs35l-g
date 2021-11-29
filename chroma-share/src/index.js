@@ -7,6 +7,7 @@ import About from "./About";
 import Faq from "./Faq";
 import Signup from './Signup';
 import Home from './Home';
+import Signin from './Signin';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -17,6 +18,7 @@ ReactDOM.render(
       <Route path='/faq' element={<Faq/>} />
       <Route path='/signup' element={<Signup/>} />
       <Route path='/home' element={<Home/>} />
+      <Route path="/signin" element={<Signin/>} />
   </Routes>
     </BrowserRouter>
   </React.StrictMode>,
