@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import About from "./About";
 import Faq from "./Faq";
 import Signup from './Signup';
+import Home from './Home';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,6 +16,7 @@ ReactDOM.render(
       <Route path='/about' element={<About/>} />
       <Route path='/faq' element={<Faq/>} />
       <Route path='/signup' element={<Signup/>} />
+      <Route path='/home' element={<Home/>} />
   </Routes>
     </BrowserRouter>
   </React.StrictMode>,

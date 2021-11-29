@@ -15,7 +15,7 @@ function Navbar() {
                     <a className="mr-5 hover:text-gray-900"><Link to="/about">About Us</Link></a>
                     <a className="mr-5 hover:text-gray-900"><Link to="/Faq">How it works</Link></a>
                 </nav>
-                <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Sign in
+                <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"> <Link to="/home">Sign in</Link>
                     <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
