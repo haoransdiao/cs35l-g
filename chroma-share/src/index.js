@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import About from "./About";
-import Faq from "./Faq";
 import Signup from './Signup';
 import Home from './Home';
 import Signin from './Signin';
+import Upload from './Upload';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,10 +15,10 @@ ReactDOM.render(
     <Routes>
       <Route path='/' element={<App/>} />
       <Route path='/about' element={<About/>} />
-      <Route path='/faq' element={<Faq/>} />
       <Route path='/signup' element={<Signup/>} />
       <Route path='/home' element={<Home/>} />
       <Route path="/signin" element={<Signin/>} />
+      <Route path="/upload" element={<Upload/>} />
   </Routes>
     </BrowserRouter>
   </React.StrictMode>,
