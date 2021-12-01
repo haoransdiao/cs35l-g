@@ -1,0 +1,6 @@
+//uses database chromashare
+> use chromashare
+//the imagedata collection
+>db.createCollection("name", optuins)
+//insert document
+>db.imagedata.insert({title: "test"})

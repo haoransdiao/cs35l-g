@@ -5,6 +5,7 @@ import ssl
 import json
 #for mimetypes
 import mimetypes
+import base64
 #opencv 2
 #import cv2
 #mongodb
@@ -70,6 +71,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		# split will result in '', filepath, so check 1 not 0
 		elif (self.path.split("/")[1] == "imageraw"):
 			self.serve_file()
+		elif (self.path.split("/")[1] == "scripts"):
+			self.serve_file()
 		elif (self.path == "/aagaash.html"):
 			self.serve_file()
 		#404 Page
@@ -82,7 +85,7 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#length and content type, for more info, see:
 		# https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 		self.log_message("Handling POST Request to path %s",self.path)
-		#checks that it's the correct content type
+		##checks that it's the correct content type
 		content_type = self.headers['content-type']
 		if content_type != "application/json":
 			self.log_message("Wrong Content Type")
@@ -94,11 +97,30 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.log_message("no content length")
 			self.send_error(400, message="POST Header has no content length")
 			return
+		self.log_message("content length: %s, content_type %s", content_length,content_type)
 		#checks that it's the correct path
 		if (self.path == "/uploadimage"):
-			#reads the json data
-			r = json.load(self.rfile.read(int(content_length)))
-			print(r)
+			#tries to read the json data ahd save as file
+			try:
+				r = json.loads(self.rfile.read(int(content_length)))
+				self.log_message("Receiving file of type:%s", r['type'])
+				#Getting the extension from mimetype
+				extension = r['type'].split("/")[-1:][0]
+				save_name = "imageraw/" + "aagaash" + "." + extension
+				self.log_message("Saving file to: %s", save_name)
+				#ensures it writes as bytes
+				save_handle = open(save_name, "wb")
+				#decodes from base64
+				byte_data = base64.b64decode(r['data'])
+				print(byte_data);
+				#writes and closes
+				save_handle.write(byte_data)
+				save_handle.close()
+			except:
+				#technically this also excepts write errors
+				self.send_error(400, message="malformed JSON")
+				return
+
 			#writes the image id in JSON
 			self.common_headers("application/json")
 			#returns image id in JSON
