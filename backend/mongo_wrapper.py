@@ -7,13 +7,15 @@ class MongoWrapper():
 		self.mc = pymongo.MongoClient("localhost", 27017)
 		self.db = self.mc['chromashare']
 		self.imagedata = self.db["imagedata"]
+		self.accounts = self.db["accounts"]
 	#creates a new image document and returns the ObjectId as a string
-	def add_image(self, mimetype):
-		#for now, the title and tag object ids are placeholders
+	def add_image(self, mimetype, title):
+		#                                        for now, the title and tag object ids are placeholders
+		#tag object ids start as empty
 		image_document = {
-			"title": "Placeholder",
+			"title": title,
 			"type": mimetype,
-			"tag_oids": ["a","b"],
+			"tag_oids": [],
 		}
 		#if there is an error with the database, an exception will be
 		# raised, in which case return None
@@ -22,3 +24,75 @@ class MongoWrapper():
 			return oid
 		except:
 			return None
+
+
+
+
+	def get_image(self, oid):
+		try:
+			image = self.imagedata.find_one({"_oid": oid})
+			return image
+		except:
+			return None
+
+
+
+	def add_account(self, password_hash, login_name):
+
+
+		existing_account = self.accounts.find_one({"login_name": login_name})
+		#This method returns a single document matching a query (or None if there are no matches).
+		if existing_account is not None:
+			return
+
+
+		account_document = {
+            "login_name": login_name,
+            "password_hash": password_hash,
+        }
+
+		try:
+			oid = self.accounts.insert_one(account_document).inserted_id
+			return oid
+		except:
+			return None
+
+
+	'''
+	#add tags to an image
+	#*args    should be used as    *list_of_new_tags
+	def add_tag(self, oid, *args):
+
+		#find image using query by _id
+		find_image = {"_id": oid}
+
+		tags = {'$push': {'tag_oids': {'$each': args}}}
+
+		self.imagedata.update_one(find_image, tags)
+	'''
+	#add a tag to an image
+	def add_tag_to_image(self, oid, tag_oid):
+
+		#find image using query by _id
+		find_image = {"_id": oid}
+
+		tags = {'$push': {'tag_oids': tag_oid}}
+
+		#self.imagedata.update_one(find_image, tags)
+
+		try:
+			tag_id = self.imagedata.update_one(find_image, tags).inserted_id
+			return tag_id
+		except:
+			return None
+
+
+
+
+
+	#get all the images for a tag
+	#def get_tag_images(self, tag_oid):
+
+
+
+
