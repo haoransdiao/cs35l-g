@@ -58,7 +58,7 @@ class MongoWrapper():
 		#This method returns a single document matching a query (or None if there are no matches).
 		if existing_account is not None:
 			raise Exception("login already exists")
-			return
+			return None
 
 		account_document = {
 			"login_name": login_name,

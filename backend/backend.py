@@ -167,8 +167,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		mw = mongo_wrapper.MongoWrapper()
 		try:
 			oid = oi(r['oid'])
-			self.log_message("Retrieving data about tag id %s", oid)
-			image_json = mw.get_tag(oid)
+			self.log_message("Retrieving data about account id id %s", oid)
+			image_json = mw.get_account(oid)
 			if image_json == None:
 				raise Exception("No json returned")
 			#change oid objects to strings, otherwize they can't be
@@ -176,7 +176,7 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			image_json['_id'] = str(image_json['_id'])
 			for i, image_oid in enumerate(image_json['image_oids']):
 				image_json['image_oids'][i] = str(image_oid)
-			for j, tag_oid in enumerate(tag_json['tag_oids']):
+			for j, tag_oid in enumerate(image_json['tag_oids']):
 				tag_json['tag_oids'][j] = str(tag_oid)
 				
 		except:
