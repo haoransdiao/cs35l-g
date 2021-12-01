@@ -1,2 +1,10 @@
 CS35L Group Project
 Haoran S. Diao, Elissa Soykin, Alexa Anderson, Simone Zamparini
+
+Requirements:
+	python 3.7+
+	npm 
+	mongodb 5.0.4-1+
+	python-pymongo-3.12.1-1 (archlinux package listed here, on pip it's just
+	pymongo)
+	opencv 4.5.4-6+, including the opencv python library
