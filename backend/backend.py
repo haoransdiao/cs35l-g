@@ -66,16 +66,20 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.send_header("Location", "/")
 			self.end_headers()
 		elif (self.path == "/"):
+			self.path = "/build/index.html"
+			self.serve_file()
 			#html headers
-			self.common_headers()
+			#self.common_headers()
 			#actual content
-			self.wfile.write(bytes("Index.html lmao","UTF-8"))
+			#self.wfile.write(bytes("Index.html lmao","UTF-8"))
 
 		#resort to serving a file if it's an actual page
 		# split will result in '', filepath, so check 1 not 0
 		elif (self.path.split("/")[1] == "imageraw"):
 			self.serve_file()
 		elif (self.path.split("/")[1] == "scripts"):
+			self.serve_file()
+		elif (self.path.split("/")[1] == "build"):
 			self.serve_file()
 		elif (self.path == "/aagaash.html"):
 			self.serve_file()

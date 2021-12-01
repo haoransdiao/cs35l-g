@@ -9,15 +9,19 @@ Requirements:
 	pymongo)
 	opencv 4.5.4-6+, including the opencv python library
 	jquery 3.6.0, included in backend/
+	craco installed through npm
 Deploy Instructions
+	Mongodb-------------------------------------------------
 	to start the mongodb process, database files are in db
 	# mongod --dbpath /backend/db
 	for access to mongodb shell
 	$ mongo
-	to start the backend
+	Backend--------------------------------------------------
 	# ./backend/backend.py
 
-
+	Frontend------------------------------------------------
+	npm run build to build the frontend, it will be served by the backend
+	from frontend/build, which has been symbolic linked
 
 
 pip install "pymongo[srv]"
