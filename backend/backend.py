@@ -8,7 +8,7 @@ import mimetypes
 import base64
 #opencv 2
 import cv2
-
+import hashlib
 #this is our own mongodb wrapper
 import mongo_wrapper
 from bson.objectid import ObjectId as oi
@@ -117,10 +117,10 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		self.common_headers("application/json")
 		#returns image id in JSON
 		self.wfile.write(bytes(json.dumps({"oid":str(oid)}),"UTF-8"))
+	#gets info about images
 	def handle_get_image(self, r):
 		#instantiates a mongo wrapper
 		mw = mongo_wrapper.MongoWrapper()
-		#trues to parse json
 		try:
 			oid = oi(r['oid'])
 			self.log_message("Retrieving data about image id %s", oid)
@@ -139,6 +139,101 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#writes back the json data
 		self.common_headers("application/json")
 		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+	#gets info about tags
+	def handle_get_tag(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			oid = oi(r['oid'])
+			self.log_message("Retrieving data about tag id %s", oid)
+			image_json = mw.get_tag(oid)
+			if image_json == None:
+				raise Exception("No json returned")
+			#change oid objects to strings, otherwize they can't be
+			#jsonified
+			image_json['_id'] = str(image_json['_id'])
+			for i, image_oid in enumerate(image_json['image_oids']):
+				image_json['image_oids'][i] = str(image_oid)
+				
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#writes back the json data
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+	#gets json data of an account
+	def handle_get_account(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			oid = oi(r['oid'])
+			self.log_message("Retrieving data about tag id %s", oid)
+			image_json = mw.get_tag(oid)
+			if image_json == None:
+				raise Exception("No json returned")
+			#change oid objects to strings, otherwize they can't be
+			#jsonified
+			image_json['_id'] = str(image_json['_id'])
+			for i, image_oid in enumerate(image_json['image_oids']):
+				image_json['image_oids'][i] = str(image_oid)
+			for j, tag_oid in enumerate(tag_json['tag_oids']):
+				tag_json['tag_oids'][j] = str(tag_oid)
+				
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#writes back the json data
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+
+	def handle_create_tag(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			title = r['title']
+			self.log_message("Creating tag w/ title: %s",title)
+			oid = mw.create_tag(title)
+			if oid == None:
+				raise Exception("could not create tag in database")
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps({"oid": str(oid)}),"UTF-8"))
+	def handle_add_tag_to_image(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			tag_oid = r['tag_oid']
+			image_oid = r['image_oid']
+			self.log_message("Adding tag %s to image %s", tag_oid,image_oid);
+			mw.add_tag_to_image(oi(image_oid), oi(tag_oid))
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps({"message": "success"}),"UTF-8"))
+	#handles creating a login
+	def handle_create_login(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			password = r['password']
+			login_name = r['login_name']
+			# salts the password
+			salted = "saltyAagaash" + login_name + password
+			#hashes with sha 256, which so far has not been broken
+			password_hash = hashlib.sha256(salted.encode()).hexdigest()
+			#will raise esception if account already exists
+			oid = mw.add_account(password_hash, login_name)
+			if oid == None:
+				raise Exception("no oid returned trying to create account")
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#returns oid
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps({"oid": str(oid)}),"UTF-8"))
 
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):
@@ -173,6 +268,16 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.handle_upload(r)
 		elif (self.path == "/api/imagedata"):
 			self.handle_get_image(r)
+		elif (self.path == "/api/tagdata"):
+			self.handle_get_tag(r)
+		elif (self.path == "/api/accdata"):
+			self.handle_get_account(r)
+		elif (self.path == "/api/createtag"):
+			self.handle_create_tag(r)
+		elif (self.path == "/api/addtag"):
+			self.handle_add_tag_to_image(r)
+		elif (self.path == "/api/createlogin"):
+			self.handle_create_login(r)
 			
 		#if the POST isn't to login or upload an image, it is invalid
 		else:

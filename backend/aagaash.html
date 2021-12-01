@@ -47,6 +47,77 @@
 				data: req_json
 			});
 		});
+		// Add tag to image API -----------------------------------------
+		$('#itadd').on('click', async function() {
+			var image_oid = $('#add_im').prop('value');
+			var tag_oid = $('#add_tg').prop('value');
+			req_json = JSON.stringify({
+				'image_oid': image_oid, 
+				'tag_oid': tag_oid
+			});
+			$.post({
+				url: 'api/addtag',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
+		// Query Tag API -----------------------------------------
+		$('#tginfo').on('click', async function() {
+			var tag_id = $('#tgid').prop('value');
+			req_json = JSON.stringify({'oid': tag_id});
+			$.post({
+				url: 'api/tagdata',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
+
+		// Create Tag -----------------------------------------
+		$('#ctg').on('click', async function() {
+			var title = $('#tgtitle').prop('value');
+			req_json = JSON.stringify({'title': title});
+			$.post({
+				url: 'api/createtag',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
+
+		// Create Login -----------------------------------------
+		$('#cl').on('click', async function() {
+			var login_name = $('#login_name').prop('value');
+			var password = $('#password').prop('value');
+			req_json = JSON.stringify({
+				'login_name': login_name, 
+				'password': password
+			});
+			$.post({
+				url: 'api/createlogin',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
+
+		// Query Account API -----------------------------------------
+		$('#accinfo').on('click', async function() {
+			var acc_id = $('#accid').prop('value');
+			req_json = JSON.stringify({'oid': acc_id});
+			$.post({
+				url: 'api/accdata',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
 	});
 </script>
 <input type="text" id="imtitle" name="imtitle" />
@@ -55,6 +126,26 @@
 <br/>
 <input type="text" id="imid" name="imid" />
 <button id="iminfo"> Get Image Data </button>
+<br/>
+<input type="text" id="add_im" name="add_im"/>
+<input type="text" id="add_tg" name="add_tg"/>
+<button id="itadd"> Add tag to image </button>
+<br/>
+<input type="text" id="tgid" name="tgid" />
+<button id="tginfo"> Get tag Data </button>
+<br/>
+
+<input type="text" id="login_name" name="login_name"/>
+<input type="text" id="password" name="password"/>
+<button id="cl"> Create Login</button>
+<br/>
+<input type="text" id="tgtitle" name="tgtitle" />
+<button id="ctg"> Create Tag </button>
+<br/>
+<input type="text" id="accid" name="accid" />
+<button id="accinfo"> Get account Data </button>
+<br/>
+
 <form action="/uploadimage" method="post">
 	<label for="image">Image Upload</label>
 	<input type="text" id="fname" name="fname">

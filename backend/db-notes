@@ -4,3 +4,12 @@
 >db.createCollection("name", optuins)
 //insert document
 >db.imagedata.insert({title: "test"})
+//lists documents in collection
+> db.COLLECTION_NAME.find()
+//finds based off attribute
+> db.imagedata.find({title: "Aagaash"})
+//returns only One
+> db.imagedata.findOne({title: "Aagaash"})
+//returns null if none
+> use admin
+> db.shutdownServer()
