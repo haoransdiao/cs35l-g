@@ -82,12 +82,11 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			#the parent class has built in error pages
 			self.send_error(404,message="Lol path not found")
 	#handles a POST request if it is an image upload
-	def handle_upload(self, content_length):
+	def handle_upload(self, r):
 		#instantiates a mongo wrapper
 		mw = mongo_wrapper.MongoWrapper()
 		#tries to read the json data ahd save as file
 		try:
-			r = json.loads(self.rfile.read(int(content_length)))
 			self.log_message("Receiving file of type:%s", r['type'])
 			self.log_message("Receiving file of title:%s", r['title'])
 			#adds entry for this image in the database and gets the
@@ -117,6 +116,19 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		self.common_headers("application/json")
 		#returns image id in JSON
 		self.wfile.write(bytes(json.dumps({"oid":str(oid)}),"UTF-8"))
+	def handle_get_image(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		#trues to parse json
+		try:
+			self.log_message("Retrieving data about image id %s", r['oid'])
+			image_json = mw.get_image(r['oid'])
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#writes back the json data
+		self.common_headers("application/json")
+		self.wfile.write(bytes(image_json,"UTF-8"))
 
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):
@@ -139,11 +151,19 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			return
 		self.log_message("content length: %s, content_type %s", content_length,content_type)
 
+		#tries to parse json
+		try:
+			r = json.loads(self.rfile.read(int(content_length)))
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
 		#Offloads processing of JSON Posts -------------------------
 		#checks that it's the correct path
 		if (self.path == "/uploadimage"):
-			self.handle_upload(content_length)
-		#elif login
+			self.handle_upload(r)
+		elif (self.path == "/api/imagedata"):
+			self.handle_get_image(r)
+			
 		#if the POST isn't to login or upload an image, it is invalid
 		else:
 			self.send_error(404, message="POST path invalid")

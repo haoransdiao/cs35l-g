@@ -4,6 +4,7 @@
 <script type="text/javascript" src="scripts/jquery-3.6.0.min.js"></script>
 <script>
 	$(document).ready(function (e) {
+		//UPLOAD IMAGE ----------------------------------------
 		$('#imup').on('click', async function() {
 			//handles only one file
 			var image_file = $('#imfile').prop('files')[0];
@@ -34,11 +35,26 @@
 				data: image_json
 			});
 		});
+		// Query Image API -----------------------------------------
+		$('#iminfo').on('click', async function() {
+			var image_id = $('#imid').prop('value');
+			req_json = JSON.stringify({'oid': image_id});
+			$.post({
+				url: 'api/imagedata',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json
+			});
+		});
 	});
 </script>
 <input type="text" id="imtitle" name="imtitle" />
 <input type="file" id="imfile" name="imfile" />
 <button id="imup"> Upload Image </button>
+<br/>
+<input type="text" id="imid" name="imid" />
+<button id="iminfo"> Get Image Data </button>
 <form action="/uploadimage" method="post">
 	<label for="image">Image Upload</label>
 	<input type="text" id="fname" name="fname">
