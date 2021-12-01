@@ -1,3 +1,47 @@
 <meta charset="utf-8"/>
 <h1> This is a debug page</h1>
 <p> Why this kolaveri kolaveri kolaveri di. <p>
+<script type="text/javascript" src="scripts/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function (e) {
+		$('#imup').on('click', async function() {
+			//handles only one file
+			var image_file = $('#imfile').prop('files')[0];
+			//we want to convert the image from whatever convoluted
+			//format JS natively uses to a base64 encoding that
+			//JQuery can pass along as json
+			var image_b = await image_file.arrayBuffer();
+			//uint8 array
+			var image_c = new Uint8Array(image_b);
+			//uint8 to string
+			var image_d = String.fromCharCode.apply(null, image_c);
+			
+			console.log(image_d);
+			var image_b64 = btoa(image_d);
+			console.log(image_b64);
+			var image_type = image_file.type;
+			image_json = JSON.stringify({'type': image_type, 'data': image_b64})
+			console.log(image_json);
+			$.post({
+				url: 'uploadimage',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: image_json
+			});
+		});
+	});
+</script>
+<input type="file" id="imfile" name="imfile" />
+<button id="imup"> Upload Image </button>
+<form action="/uploadimage" method="post">
+	<label for="image">Image Upload</label>
+	<input type="text" id="fname" name="fname">
+	<input type="submit" value="Upload">
+</form>
+
+<form action="/uploadimage" method="post">
+	<label for="image">Image Upload</label>
+	<input type="file" id="image" name="image">
+	<input type="submit" value="Upload">
+</form>
