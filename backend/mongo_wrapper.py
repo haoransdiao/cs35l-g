@@ -57,11 +57,14 @@ class MongoWrapper():
 		existing_account = self.accounts.find_one({"login_name": login_name})
 		#This method returns a single document matching a query (or None if there are no matches).
 		if existing_account is not None:
+			raise Exception("login already exists")
 			return
 
 		account_document = {
 			"login_name": login_name,
 			"password_hash": password_hash,
+			"tag_oids": [],
+			"image_oids": [],
 		}
 
 		try:
@@ -88,6 +91,71 @@ class MongoWrapper():
 		update_images = {'$push': {'image_oids': oid}}
 
 		self.tags.update_one(find_tag, update_images)
+	
+
+
+	def add_image_histogram(self, oid, hist_id):
+
+		#update image to reflect the histogram:
+
+		find_image = {"_id": oid}     #find image using query by _id
+		update_histogram = {"$set": {"histogram": hist_id}}
+
+		self.imagedata.update_one(find_image, update_histogram)
+
+	
+
+	def get_image_histogram(self, oid):
+
+		image = self.imagedata.find_one({"_id": oid})
+
+		histogram = image["histogram"]
+
+		return histogram
+	
+
+
+	def get_account(self, account_id):
+
+		try:
+			account = self.accounts.find_one({"_id": account_id})
+			return account
+		except:
+			return None
+
+
+
+	def get_tag(self, tag_id):
+
+		try:
+			tag = self.tags.find_one({"_id": tag_id})
+			return tag
+		except:
+			return None
+
+	
+
+	def add_image_to_account(self, account_id, oid):
+
+		#update account to reflect the image:
+
+		find_account = {"_id": account_id}     #find account using query by _id
+		update_images = {'$push': {"image_oids": oid}}
+
+		self.accounts.update_one(find_account, update_images)
+	
+
+
+	def add_tag_to_account(self, account_id, tag_id):
+
+		#update account to reflect the tag:
+
+		find_account = {"_id": account_id}     #find account using query by _id
+		update_tags = {'$push': {"tag_oids": tag_id}}
+
+		self.accounts.update_one(find_account, update_tags)
+
+
 
 
 
