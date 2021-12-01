@@ -7,9 +7,13 @@ import json
 import mimetypes
 import base64
 #opencv 2
-#import cv2
+import cv2
 #mongodb
-#import pymongo
+import pymongo
+
+#this is our own mongodb wrapper
+import mongo_wrapper
+
 
 #Request handlers are an extension of the one from http.server
 # get and [ost are handled with do_GET and do_POST
@@ -79,8 +83,45 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		else:
 			#the parent class has built in error pages
 			self.send_error(404,message="Lol path not found")
+	#handles a POST request if it is an image upload
+	def handle_upload(self, content_length):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		#tries to read the json data ahd save as file
+		try:
+			r = json.loads(self.rfile.read(int(content_length)))
+			self.log_message("Receiving file of type:%s", r['type'])
+			#adds entry for this image in the database and gets the
+			#oid
+			oid = mw.add_image(r['type'],"Placeholder Title")
+			if oid == None:
+				raise Exception("failed to create image document in database")
+			self.log_message("Object ID of image: %s", oid)
+			#Getting the extension from mimetype
+			extension = r['type'].split("/")[-1:][0]
+			#TODO: making sure it's an image
+			save_name = "imageraw/" + str(oid) + "." + extension
+			self.log_message("Saving file to: %s", save_name)
+			#ensures it writes as bytes
+			save_handle = open(save_name, "wb")
+			#decodes from base64
+			byte_data = base64.b64decode(r['data'])
+			#writes and closes
+			save_handle.write(byte_data)
+			save_handle.close()
+		except:
+			#technically this also excepts write errors
+			self.send_error(400, message="malformed JSON")
+			return
+
+		#writes the image id in JSON
+		self.common_headers("application/json")
+		#returns image id in JSON
+		self.wfile.write(bytes(json.dumps({"id":42069}),"UTF-8"))
+
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):
+		#validate the POST request-----------------------------------
 		#the header of a POST request contains information about its
 		#length and content type, for more info, see:
 		# https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
@@ -98,45 +139,22 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.send_error(400, message="POST Header has no content length")
 			return
 		self.log_message("content length: %s, content_type %s", content_length,content_type)
+
+		#Offloads processing of JSON Posts -------------------------
 		#checks that it's the correct path
 		if (self.path == "/uploadimage"):
-			#tries to read the json data ahd save as file
-			try:
-				r = json.loads(self.rfile.read(int(content_length)))
-				self.log_message("Receiving file of type:%s", r['type'])
-				#Getting the extension from mimetype
-				extension = r['type'].split("/")[-1:][0]
-				save_name = "imageraw/" + "aagaash" + "." + extension
-				self.log_message("Saving file to: %s", save_name)
-				#ensures it writes as bytes
-				save_handle = open(save_name, "wb")
-				#decodes from base64
-				byte_data = base64.b64decode(r['data'])
-				print(byte_data);
-				#writes and closes
-				save_handle.write(byte_data)
-				save_handle.close()
-			except:
-				#technically this also excepts write errors
-				self.send_error(400, message="malformed JSON")
-				return
-
-			#writes the image id in JSON
-			self.common_headers("application/json")
-			#returns image id in JSON
-			self.wfile.write(bytes(json.dumps({"id":42069}),"UTF-8"))
+			self.handle_upload(content_length)
 		#elif login
 		#if the POST isn't to login or upload an image, it is invalid
 		else:
 			self.send_error(404, message="POST path invalid")
-
 
 def main():
 	print("\033[33mStarting Up Backend Server\033[39m")
 	#server daemon. Threaded version only available for Python 3.7+
 	#port 443 is for https, which we will add later, but this also requires
 	#root on most systems
-	httpd = hs.ThreadingHTTPServer(('localhost',443), RequestHandler)
+	httpd = hs.ThreadingHTTPServer(('localhost',8000), RequestHandler)
 	print("\033[33mhttpd class instantiated... starting serve loop\033[39m")
 	#morbid method name lol
 	httpd.serve_forever()
