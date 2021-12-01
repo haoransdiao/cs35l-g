@@ -30,7 +30,7 @@ class MongoWrapper():
 
 	def get_image(self, oid):
 		try:
-			image = self.imagedata.find_one({"_oid": oid})
+			image = self.imagedata.find_one({"_id": oid})
 			return image
 		except:
 			return None

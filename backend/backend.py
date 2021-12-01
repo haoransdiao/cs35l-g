@@ -11,6 +11,7 @@ import cv2
 
 #this is our own mongodb wrapper
 import mongo_wrapper
+import bson
 
 
 #Request handlers are an extension of the one from http.server
@@ -121,14 +122,23 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		mw = mongo_wrapper.MongoWrapper()
 		#trues to parse json
 		try:
-			self.log_message("Retrieving data about image id %s", r['oid'])
-			image_json = mw.get_image(r['oid'])
+			oid = bson.objectid.ObjectId(r['oid'])
+			self.log_message("Retrieving data about image id %s", oid)
+			image_json = mw.get_image(oid)
+			if image_json == None:
+				raise Exception("No json returned")
+			#change oid objects to strings, otherwize they can't be
+			#jsonified
+			image_json['_id'] = str(image_json['_id'])
+			for i, tag_oid in enumerate(image_json['tag_oids']):
+				image_json['tag_oids'][i] = str(tag_oid)
+				
 		except:
 			self.send_error(400, message="malformed JSON")
 			return
 		#writes back the json data
 		self.common_headers("application/json")
-		self.wfile.write(bytes(image_json,"UTF-8"))
+		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
 
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):
