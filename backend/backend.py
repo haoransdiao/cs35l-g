@@ -11,7 +11,7 @@ import cv2
 
 #this is our own mongodb wrapper
 import mongo_wrapper
-import bson
+from bson.objectid import ObjectId as oi
 
 
 #Request handlers are an extension of the one from http.server
@@ -122,7 +122,7 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		mw = mongo_wrapper.MongoWrapper()
 		#trues to parse json
 		try:
-			oid = bson.objectid.ObjectId(r['oid'])
+			oid = oi(r['oid'])
 			self.log_message("Retrieving data about image id %s", oid)
 			image_json = mw.get_image(oid)
 			if image_json == None:

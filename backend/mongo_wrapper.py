@@ -45,11 +45,10 @@ class MongoWrapper():
 		if existing_account is not None:
 			return
 
-
 		account_document = {
-            "login_name": login_name,
-            "password_hash": password_hash,
-        }
+			"login_name": login_name,
+			"password_hash": password_hash,
+		}
 
 		try:
 			oid = self.accounts.insert_one(account_document).inserted_id
@@ -58,40 +57,14 @@ class MongoWrapper():
 			return None
 
 
-	'''
-	#add tags to an image
-	#*args    should be used as    *list_of_new_tags
-	def add_tag(self, oid, *args):
-
-		#find image using query by _id
-		find_image = {"_id": oid}
-
-		tags = {'$push': {'tag_oids': {'$each': args}}}
-
-		self.imagedata.update_one(find_image, tags)
-	'''
 	#add a tag to an image
 	def add_tag_to_image(self, oid, tag_oid):
-
 		#find image using query by _id
 		find_image = {"_id": oid}
 
 		tags = {'$push': {'tag_oids': tag_oid}}
 
-		#self.imagedata.update_one(find_image, tags)
-
-		try:
-			tag_id = self.imagedata.update_one(find_image, tags).inserted_id
-			return tag_id
-		except:
-			return None
-
-
-
-
-
-	#get all the images for a tag
-	#def get_tag_images(self, tag_oid):
+		self.imagedata.update_one(find_image, tags)
 
 
 
