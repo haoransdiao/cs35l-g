@@ -8,14 +8,15 @@ class MongoWrapper():
 		self.db = self.mc['chromashare']
 		self.imagedata = self.db["imagedata"]
 		self.accounts = self.db["accounts"]
+		self.tags = self.db["tags"]
 	#creates a new image document and returns the ObjectId as a string
 	def add_image(self, mimetype, title):
-		#                                        for now, the title and tag object ids are placeholders
-		#tag object ids start as empty
+		#tag object ids and histogram start as empty
 		image_document = {
 			"title": title,
 			"type": mimetype,
 			"tag_oids": [],
+			"histogram": "",
 		}
 		#if there is an error with the database, an exception will be
 		# raised, in which case return None
@@ -25,6 +26,20 @@ class MongoWrapper():
 		except:
 			return None
 
+
+
+	def create_tag(self, tag_name):
+
+		tag_document = {
+			"tag_name": tag_name,
+			"image_oids": []
+		}
+
+		try:
+			tag_id = self.tags.insert_one(tag_document).inserted_id
+			return tag_id
+		except:
+			return None
 
 
 
@@ -38,7 +53,6 @@ class MongoWrapper():
 
 
 	def add_account(self, password_hash, login_name):
-
 
 		existing_account = self.accounts.find_one({"login_name": login_name})
 		#This method returns a single document matching a query (or None if there are no matches).
@@ -57,14 +71,26 @@ class MongoWrapper():
 			return None
 
 
+
 	#add a tag to an image
 	def add_tag_to_image(self, oid, tag_oid):
-		#find image using query by _id
-		find_image = {"_id": oid}
 
-		tags = {'$push': {'tag_oids': tag_oid}}
+		#update image to reflect the tag:
 
-		self.imagedata.update_one(find_image, tags)
+		find_image = {"_id": oid}     #find image using query by _id
+		update_tags = {'$push': {'tag_oids': tag_oid}}
+
+		self.imagedata.update_one(find_image, update_tags)
+
+		#and update the tag to reflect the associated image:
+
+		find_tag = {"_id": tag_oid}
+		update_images = {'$push': {'image_oids': oid}}
+
+		self.tags.update_one(find_tag, update_images)
+
+
+
 
 
 
