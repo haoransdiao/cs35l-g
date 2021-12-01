@@ -1,6 +1,7 @@
 import Navbarlogged from "./Navbarlogged";
 import React from 'react';
 import Search from "./Search";
+import Footer from './Footer';
 
 function Home() {
   React.state = {
@@ -63,6 +64,7 @@ function Home() {
           </React.Fragment>
         </div>
       </div>
+      <Footer/>
     </section>
   );
 }
