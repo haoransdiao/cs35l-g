@@ -12,7 +12,8 @@ import hashlib
 #this is our own mongodb wrapper
 import mongo_wrapper
 from bson.objectid import ObjectId as oi
-
+#our authenticator
+import auth
 
 #Request handlers are an extension of the one from http.server
 # get and [ost are handled with do_GET and do_POST
@@ -220,10 +221,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		try:
 			password = r['password']
 			login_name = r['login_name']
-			# salts the password
-			salted = "saltyAagaash" + login_name + password
-			#hashes with sha 256, which so far has not been broken
-			password_hash = hashlib.sha256(salted.encode()).hexdigest()
+			#hashes password with our authenticator
+			password_hash = auth.hash(login_name, password)
 			#will raise esception if account already exists
 			oid = mw.add_account(password_hash, login_name)
 			if oid == None:

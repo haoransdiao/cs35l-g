@@ -9,6 +9,7 @@ class MongoWrapper():
 		self.imagedata = self.db["imagedata"]
 		self.accounts = self.db["accounts"]
 		self.tags = self.db["tags"]
+		self.tokens = self.db['tokens']
 	#creates a new image document and returns the ObjectId as a string
 	def add_image(self, mimetype, title):
 		#tag object ids and histogram start as empty
@@ -25,7 +26,6 @@ class MongoWrapper():
 			return oid
 		except:
 			return None
-
 
 
 	def create_tag(self, tag_name):
@@ -123,7 +123,34 @@ class MongoWrapper():
 		except:
 			return None
 
+	#gets the account by login name
+	def get_account_n(self, login_name):
 
+		try:
+			account = self.accounts.find_one({"login_name":login_name})
+			return account
+		except:
+			return None
+	#creates a new token, then return the token json
+	def create_token(self, login_name, random):
+		token_document = {
+			"login_name": login_name,
+			"random": random
+		}
+
+		try:
+			token_id = self.tokens.insert_one(token_document).inserted_id
+			return self.tokens.find_one({"_id": token_id})
+		except:
+			return None
+	# gets a token
+	def get_token(self, oid):
+
+		try:
+			token = self.tokens.find_one({"_id":oid})
+			return token
+		except:
+			return None
 
 	def get_tag(self, tag_id):
 
