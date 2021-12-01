@@ -8,8 +8,6 @@ import mimetypes
 import base64
 #opencv 2
 import cv2
-#mongodb
-import pymongo
 
 #this is our own mongodb wrapper
 import mongo_wrapper
@@ -91,9 +89,10 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		try:
 			r = json.loads(self.rfile.read(int(content_length)))
 			self.log_message("Receiving file of type:%s", r['type'])
+			self.log_message("Receiving file of title:%s", r['title'])
 			#adds entry for this image in the database and gets the
 			#oid
-			oid = mw.add_image(r['type'],"Placeholder Title")
+			oid = mw.add_image(r['type'],r['title'])
 			if oid == None:
 				raise Exception("failed to create image document in database")
 			self.log_message("Object ID of image: %s", oid)
@@ -117,7 +116,7 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#writes the image id in JSON
 		self.common_headers("application/json")
 		#returns image id in JSON
-		self.wfile.write(bytes(json.dumps({"id":42069}),"UTF-8"))
+		self.wfile.write(bytes(json.dumps({"oid":str(oid)}),"UTF-8"))
 
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):

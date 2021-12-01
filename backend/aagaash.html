@@ -21,7 +21,10 @@
 			var image_b64 = btoa(image_d);
 			//console.log(image_b64);
 			var image_type = image_file.type;
-			image_json = JSON.stringify({'type': image_type, 'data': image_b64})
+
+			//gets image title
+			var image_title = $('#imtitle').prop('value')
+			image_json = JSON.stringify({'title': image_title, 'type': image_type, 'data': image_b64})
 			//console.log(image_json);
 			$.post({
 				url: 'uploadimage',
@@ -33,6 +36,7 @@
 		});
 	});
 </script>
+<input type="text" id="imtitle" name="imtitle" />
 <input type="file" id="imfile" name="imfile" />
 <button id="imup"> Upload Image </button>
 <form action="/uploadimage" method="post">
