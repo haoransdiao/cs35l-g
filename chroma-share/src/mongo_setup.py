@@ -38,6 +38,8 @@ def global_init():
 '''
 
 
+
+
 import mongoengine
 
 
@@ -50,3 +52,14 @@ from mongoengine import connect
 def global_init():
     connect(host="mongodb+srv://chromashare.asmjs.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority")
     # ^ the URI from the chromashare mongoDB site
+
+
+
+
+'''
+from pymongo import MongoClient
+
+client = MongoClient(
+    "mongodb+srv://chromashare.asmjs.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+)
+'''

@@ -29,7 +29,7 @@ class PhotoPost(mongoengine.EmbeddedDocument):
     is_public = mongoengine.BooleanField(required=True)
 
 
-    # ID
+    photo_id = mongoengine.IntField()
 
 
     #to communicate with database:
@@ -50,6 +50,8 @@ class Account(mongoengine.Document):
 
 
     photos = mongoengine.EmbeddedDocumentListField(PhotoPost)
+    photo_ids = mongoengine.ListField()
+
 
     tags = mongoengine.ListField()
 

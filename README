@@ -16,3 +16,8 @@ Deploy Instructions
 	$ mongo
 	to start the backend
 	# ./backend/backend.py
+
+
+
+
+pip install "pymongo[srv]"

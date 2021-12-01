@@ -19,6 +19,8 @@ def main():
     
     #print("Welcome to ChromaShare!")
 
+    #create_account()
+
 
 
 
@@ -80,3 +82,20 @@ def log_in_to_account():
     #state.active_account = account
     print('Logged in successfully.')
 
+
+
+
+
+#def upload_photo():
+
+
+
+
+
+#def get_image_tags()
+
+
+
+
+#add this to call main:
+main()
