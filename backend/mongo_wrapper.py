@@ -219,6 +219,48 @@ class MongoWrapper():
 
 
 
+	def search_image(self, title, login_name):
+
+		if login_name == None:
+			#return image ids of all images with that title
+
+			#mongo "query, projection" syntax for find
+			image_ids = self.imagedata.find( {"title": title}, { "_id": 1 } )
+			return image_ids
+		
+
+		elif login_name != None:
+			#search only for images owned by the account
+			all_account_image_ids = self.accounts.find( {"login_name": login_name}, { "image_oids": 1 } )
+			image_ids = self.imagedata.find( 
+				{ '$and': [ { "_id": { '$in': all_account_image_ids } },  { "title": title } ] }, 
+				{ "_id": 1 }
+				)	
+			return image_ids
+
+	
+
+	def search_tag(self, tag_name, login_name):
+
+		if login_name == None:
+			#return image ids of all tags with that name
+
+			#mongo "query, projection" syntax for find
+			image_ids = self.tags.find( {"tag_name": tag_name}, { "image_oids": 1 } )
+			return image_ids
+		
+
+		elif login_name != None:
+			#search only for tags owned by the account
+			all_account_tag_ids = self.accounts.find( {"login_name": login_name}, { "tag_oids": 1 } )
+			image_ids = self.tags.find( 
+				{ '$and': [ { "_id": { '$in': all_account_tag_ids } },  { "tag_name": tag_name } ] }, 
+				{ "image_oids": 1 }
+				)	
+			return image_ids
+
+
+
 
 
 
