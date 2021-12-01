@@ -3,6 +3,8 @@
 <p> Why this kolaveri kolaveri kolaveri di. <p>
 <script type="text/javascript" src="scripts/jquery-3.6.0.min.js"></script>
 <script>
+	//global token variabke
+	var token = ""
 	$(document).ready(function (e) {
 		//UPLOAD IMAGE ----------------------------------------
 		$('#imup').on('click', async function() {
@@ -25,7 +27,12 @@
 
 			//gets image title
 			var image_title = $('#imtitle').prop('value')
-			image_json = JSON.stringify({'title': image_title, 'type': image_type, 'data': image_b64})
+			image_json = JSON.stringify({
+				'title': image_title,
+				'type': image_type,
+				'data': image_b64,
+				'token': token
+			});
 			//console.log(image_json);
 			$.post({
 				url: 'uploadimage',
@@ -53,7 +60,8 @@
 			var tag_oid = $('#add_tg').prop('value');
 			req_json = JSON.stringify({
 				'image_oid': image_oid, 
-				'tag_oid': tag_oid
+				'tag_oid': tag_oid,
+				'token': token,
 			});
 			$.post({
 				url: 'api/addtag',
@@ -79,7 +87,10 @@
 		// Create Tag -----------------------------------------
 		$('#ctg').on('click', async function() {
 			var title = $('#tgtitle').prop('value');
-			req_json = JSON.stringify({'title': title});
+			req_json = JSON.stringify({
+				'title': title,
+				'token': token,
+			});
 			$.post({
 				url: 'api/createtag',
 				contentType: 'application/json', //type of
@@ -105,7 +116,26 @@
 				data: req_json
 			});
 		});
-
+		// Login -----------------------------------------
+		$('#login').on('click', async function() {
+			var login_name = $('#login_name').prop('value');
+			var password = $('#password').prop('value');
+			req_json = JSON.stringify({
+				'login_name': login_name, 
+				'password': password
+			});
+			$.post({
+				url: 'api/login',
+				contentType: 'application/json', //type of
+				//content posted
+				dataType: 'json',//what to expect back from the server
+				data: req_json,
+				success: function (result) {
+					console.log(result)
+					token = result
+				}
+			});
+		});
 		// Query Account API -----------------------------------------
 		$('#accinfo').on('click', async function() {
 			var acc_id = $('#accid').prop('value');
@@ -138,6 +168,7 @@
 <input type="text" id="login_name" name="login_name"/>
 <input type="text" id="password" name="password"/>
 <button id="cl"> Create Login</button>
+<button id="login"> Login </button>
 <br/>
 <input type="text" id="tgtitle" name="tgtitle" />
 <button id="ctg"> Create Tag </button>
@@ -146,14 +177,3 @@
 <button id="accinfo"> Get account Data </button>
 <br/>
 
-<form action="/uploadimage" method="post">
-	<label for="image">Image Upload</label>
-	<input type="text" id="fname" name="fname">
-	<input type="submit" value="Upload">
-</form>
-
-<form action="/uploadimage" method="post">
-	<label for="image">Image Upload</label>
-	<input type="file" id="image" name="image">
-	<input type="submit" value="Upload">
-</form>
