@@ -1,0 +1,48 @@
+<meta charset="utf-8"/>
+<h1>Chromashare</h1>
+<p> More than just storage <p>
+<!--- Script dependencies All MIT licensed --->
+<script type="text/javascript" src="/scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/scripts/index.js"></script>
+<link rel="stylesheet" href="/build/style.css">
+
+<div style="display: flex; flex-direction: row; justify-content: space-between">
+	<!--- Login block--->
+	<div style="display: flex">
+	<p>login:</p><input type="text" id="login_name" name="login_name"/>
+	<p>password</p><input type="text" id="password" name="password"/>
+	<br/>
+	<button id="cl"> Register</button>
+	<button id="login"> Login </button>
+	</div>
+
+
+	<div style="display: flex">
+	<input type="text" id="accid" name="accid" />
+	<button id="accinfo"> Get account Data </button>
+	<br/>
+	</div>
+
+	<div>
+	<p id="login-display">Not Logged In</p>
+	<button id="signout"> Sign Out </button>
+	</div>
+</div>
+<h1>Your Images</h1>
+<div id = "image_carrier" style="display: flex; flex-direction: flow; justify-content: space-between">
+</div>
+		<div>
+		Title: 
+		<input type="text" id="imtitle" name="imtitle" />
+		<input type="file" id="imfile" name="imfile" />
+		<button id="imup"> Upload Image </button>
+	</div>
+<h1>Your Tags</h1>
+<div id = "tag_carrier" style="display: flex; flex-direction: flow; justify-content: space-between">
+</div>
+
+<div>
+Tag Name:
+<input type="text" id="tgtitle" name="tgtitle" />
+<button id="ctg"> Create Tag </button>
+</div>
