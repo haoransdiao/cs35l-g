@@ -59,6 +59,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#request Handlers have its own log format seperate from a simple
 		#print()
 		self.log_message("Handling GET Request to path %s",self.path)
+		#ignores everything after ?, this is for the client to parse
+		self.path = self.path.split("?")[0]
 		#redirects to / for index.html
 		if (self.path == "/index.html"):
 			self.log_message("redirecting %s to /", self.path)
@@ -191,7 +193,7 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			for i, image_oid in enumerate(image_json['image_oids']):
 				image_json['image_oids'][i] = str(image_oid)
 			for j, tag_oid in enumerate(image_json['tag_oids']):
-				tag_json['tag_oids'][j] = str(tag_oid)
+				image_json['tag_oids'][j] = str(tag_oid)
 				
 		except:
 			self.send_error(400, message="malformed JSON")
@@ -199,6 +201,31 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#writes back the json data
 		self.common_headers("application/json")
 		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+	#gets json data of an account from name
+	def handle_get_account_n(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			login_name = r['login_name']
+			self.log_message("Retrieving data about account %s", login_name)
+			image_json = mw.get_account_n(login_name)
+			if image_json == None:
+				raise Exception("No json returned")
+			#change oid objects to strings, otherwize they can't be
+			#jsonified
+			image_json['_id'] = str(image_json['_id'])
+			for i, image_oid in enumerate(image_json['image_oids']):
+				image_json['image_oids'][i] = str(image_oid)
+			for j, tag_oid in enumerate(image_json['tag_oids']):
+				image_json['tag_oids'][j] = str(tag_oid)
+				
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#writes back the json data
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+
 
 	def handle_create_tag(self, r):
 		#instantiates a mongo wrapper
@@ -318,6 +345,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.handle_get_tag(r)
 		elif (self.path == "/api/accdata"):
 			self.handle_get_account(r)
+		elif (self.path == "/api/accdatan"):
+			self.handle_get_account_n(r)
 		elif (self.path == "/api/createtag"):
 			self.handle_create_tag(r)
 		elif (self.path == "/api/addtag"):
