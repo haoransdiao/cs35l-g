@@ -1,0 +1,22 @@
+<meta charset="utf-8"/>
+<h1>Chromashare</h1>
+<p> More than just storage <p>
+<!--- Script dependencies All MIT licensed --->
+<script type="text/javascript" src="/scripts/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/scripts/common.js"></script>
+<link rel="stylesheet" href="/build/style.css">
+<script>
+	$(document).ready(function (e) {
+		oid = window.location.search.split("=")[1];
+		display_image(oid);
+	});
+</script>
+</script>
+<a href="/">Home</a>
+<h1>View Images</h1>
+<div id = "image_carrier" style="display: flex; flex-direction: flow; justify-content: space-between">
+</div>
+<h1>Image Tags</h1>
+<div id = "tag_carrier" style="display: flex; flex-direction: flow; justify-content: space-between">
+</div>
+<button id="add_tag">Add Tag</button>
