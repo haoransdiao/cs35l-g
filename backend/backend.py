@@ -66,16 +66,20 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.send_header("Location", "/")
 			self.end_headers()
 		elif (self.path == "/"):
+			self.path = "/build/index.html"
+			self.serve_file()
 			#html headers
-			self.common_headers()
+			#self.common_headers()
 			#actual content
-			self.wfile.write(bytes("Index.html lmao","UTF-8"))
+			#self.wfile.write(bytes("Index.html lmao","UTF-8"))
 
 		#resort to serving a file if it's an actual page
 		# split will result in '', filepath, so check 1 not 0
 		elif (self.path.split("/")[1] == "imageraw"):
 			self.serve_file()
 		elif (self.path.split("/")[1] == "scripts"):
+			self.serve_file()
+		elif (self.path.split("/")[1] == "build"):
 			self.serve_file()
 		elif (self.path == "/aagaash.html"):
 			self.serve_file()
@@ -94,9 +98,18 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			#adds entry for this image in the database and gets the
 			#oid
 			oid = mw.add_image(r['type'],r['title'])
+			self.log_message("Object ID of image: %s", oid)
 			if oid == None:
 				raise Exception("failed to create image document in database")
-			self.log_message("Object ID of image: %s", oid)
+
+			# sees if there is an auth token
+			if r['token'] == "" or r['token'] == None:
+				self.send_error(401, message="Not logged in")
+				return
+			# if there, get the account and add the image to its
+			# possession
+			acc_json = mw.get_account_n(r['token']['login_name'])
+			mw.add_image_to_account(acc_json['_id'], oid)
 			#Getting the extension from mimetype
 			extension = r['type'].split("/")[-1:][0]
 			#TODO: making sure it's an image
@@ -191,11 +204,20 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#instantiates a mongo wrapper
 		mw = mongo_wrapper.MongoWrapper()
 		try:
+			#creates tag
 			title = r['title']
 			self.log_message("Creating tag w/ title: %s",title)
 			oid = mw.create_tag(title)
 			if oid == None:
 				raise Exception("could not create tag in database")
+			# sees if there is an auth token
+			if r['token'] == "" or r['token'] == None:
+				self.send_error(401, message="Not logged in")
+				return
+			# if there, get the account and add the tag to its
+			# possession
+			acc_json = mw.get_account_n(r['token']['login_name'])
+			mw.add_tag_to_account(acc_json['_id'], oid)
 		except:
 			self.send_error(400, message="malformed JSON")
 			return
@@ -207,6 +229,15 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		try:
 			tag_oid = r['tag_oid']
 			image_oid = r['image_oid']
+			#authenticates the token, can only proceed if the user
+			#owns both image and tag
+			#adds the tag to the image
+			if r['token'] == "" or r['token'] == None:
+				self.send_error(401, message="Not logged in")
+				return
+			if (not auth.authenticate(r['token'], [oi(tag_oid), oi(image_oid)])):
+				self.send_error(401, message="User Does not own both tag and image")
+				return
 			self.log_message("Adding tag %s to image %s", tag_oid,image_oid);
 			mw.add_tag_to_image(oi(image_oid), oi(tag_oid))
 		except:
@@ -233,6 +264,22 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#returns oid
 		self.common_headers("application/json")
 		self.wfile.write(bytes(json.dumps({"oid": str(oid)}),"UTF-8"))
+	#gives back a token as json
+	def handle_login(self, r):
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			password = r['password']
+			login_name = r['login_name']
+			token = auth.login(login_name, password)
+			if (token == None):
+				raise Exception("Login Failed")
+		except:
+			self.send_error(401, message="Login Failed")
+			return
+		#returns oid
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps(token),"UTF-8"))
 
 	#handles login and image uploads, as well as all other JSON requests
 	def do_POST(self):
@@ -277,6 +324,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.handle_add_tag_to_image(r)
 		elif (self.path == "/api/createlogin"):
 			self.handle_create_login(r)
+		elif (self.path == "/api/login"):
+			self.handle_login(r)
 			
 		#if the POST isn't to login or upload an image, it is invalid
 		else:

@@ -39,18 +39,20 @@ def authenticate(token, oids):
 	#databse wrapper
 	mw = mongo_wrapper.MongoWrapper()
 	try: 
+		print("Authenticating: ", token['login_name'])
 		#checks if the token is legit
 		db_token = mw.get_token(oi(token['_id']))
 		if db_token['login_name'] != token['login_name'] or db_token['random'] != token['random']:
-
-				return False
+			print("Invalid Token")	
+			return False
 		#checks if the oid is in the account id
-		acc_json = mw.get_login_n(token['login_name'])
+		acc_json = mw.get_account_n(token['login_name'])
+		print(acc_json)
 		# goes through each oid supplied, and checks for it in both
 		# tokens and images, if it is not in any, return false
 		for oid in oids:
 			owned = False
-			for t_oid in acc_json['token_oids']:
+			for t_oid in acc_json['tag_oids']:
 				if oid == t_oid:
 					owned = True
 			for i_oid in acc_json['image_oids']:
@@ -61,4 +63,5 @@ def authenticate(token, oids):
 		return True
 			
 	except:
+		print("Exception Raised while authenticating")
 		return False

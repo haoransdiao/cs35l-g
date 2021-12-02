@@ -94,6 +94,33 @@ class MongoWrapper():
 	
 
 
+	def remove_tag_from_image(self, oid, tag_oid):
+
+		#update image to reflect removed tag:
+
+		find_image = {"_id": oid}     #find image using query by _id
+
+		#find image, get its tags, and use python .remove() to make new list of tags
+		image = self.imagedata.find_one({"_id": oid})
+		old_tags = image["tag_oids"]
+		new_tags = old_tags.remove(tag_oid)
+		update_tags = {"$set": {"tag_oids": new_tags}}
+
+		self.imagedata.update_one(find_image, update_tags)
+
+		#and update the tag to reflect a removed image:
+
+		find_tag = {"_id": tag_oid}
+
+		tag = self.tags.find_one({"_id": tag_oid})
+		old_images = tag["image_oids"]
+		new_images = old_images.remove(oid)
+		update_images = {"$set": {"image_oids": new_images}}
+
+		self.tags.update_one(find_tag, update_images)
+
+	
+
 	def add_image_histogram(self, oid, hist_id):
 
 		#update image to reflect the histogram:
@@ -131,6 +158,9 @@ class MongoWrapper():
 			return account
 		except:
 			return None
+	
+
+
 	#creates a new token, then return the token json
 	def create_token(self, login_name, random):
 		token_document = {
@@ -143,6 +173,9 @@ class MongoWrapper():
 			return self.tokens.find_one({"_id": token_id})
 		except:
 			return None
+	
+
+
 	# gets a token
 	def get_token(self, oid):
 
@@ -151,6 +184,8 @@ class MongoWrapper():
 			return token
 		except:
 			return None
+
+
 
 	def get_tag(self, tag_id):
 
@@ -184,6 +219,45 @@ class MongoWrapper():
 
 
 
+	def search_image(self, title, login_name):
+
+		if login_name == None:
+			#return image ids of all images with that title
+
+			#mongo "query, projection" syntax for find
+			image_ids = self.imagedata.find( {"title": title}, { "_id": 1 } )
+			return image_ids
+		
+
+		elif login_name != None:
+			#search only for images owned by the account
+			all_account_image_ids = self.accounts.find( {"login_name": login_name}, { "image_oids": 1 } )
+			image_ids = self.imagedata.find( 
+				{ '$and': [ { "_id": { '$in': all_account_image_ids } },  { "title": title } ] }, 
+				{ "_id": 1 }
+				)	
+			return image_ids
+
+	
+
+	def search_tag(self, tag_name, login_name):
+
+		if login_name == None:
+			#return image ids of all tags with that name
+
+			#mongo "query, projection" syntax for find
+			image_ids = self.tags.find( {"tag_name": tag_name}, { "image_oids": 1 } )
+			return image_ids
+		
+
+		elif login_name != None:
+			#search only for tags owned by the account
+			all_account_tag_ids = self.accounts.find( {"login_name": login_name}, { "tag_oids": 1 } )
+			image_ids = self.tags.find( 
+				{ '$and': [ { "_id": { '$in': all_account_tag_ids } },  { "tag_name": tag_name } ] }, 
+				{ "image_oids": 1 }
+				)	
+			return image_ids
 
 
 
