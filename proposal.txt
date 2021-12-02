@@ -1,6 +1,6 @@
 # ChromaShare Project Proposal
 
-ChromaShare is an Webapp that allows people to store photos in a better way and share them with their friends. 
+ChromaShare is an Webapp that allows people to store photos in a more efficient way. 
 It offers more options for customization than default, already-installed photos apps on phones.
 Instead of putting a photo into an album on their phone, users can decide to tag
 a photo with many relevant tags and then perform advanced searches to find instantly what they're looking for. This will let them easily access
@@ -9,25 +9,18 @@ for photos related to various themes.
 
 # Features:
 
-- Create an account with username and password
+- Upload and store images
 
-- Upload photos (and share them if you'd like)
+- Add personal tags to images
 
-- Give many tags to a photo
+- Search for images through title
 
-- Search for tags and see related photos 
+- Shuffle to random images in your personal galleries
 
-- Automatically tag photos based on color composition 
+-Create an account with a login and password to access stored images and upload
 
-- Report inappropriate content 
+-Able to see the images attached to a specififc tag
 
-- Recommend tags based on color histograms photos you shared 
-
-- Add notes to your pictures
-
-- Advanced search pictures by title, notes and color composition.
-
-- Assign the most popular color in each picture 
 
 # Architecture:
 ## Server written in Python
