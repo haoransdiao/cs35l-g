@@ -1,3 +1,39 @@
 .image_box {
 	width:  20vw;
 }
+
+
+
+
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+    background-color: whitesmoke;
+  }
+  
+  h1 {
+    background-color:pink;
+    color: black;
+    font-weight: bold;
+    border:4px solid slateblue;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  p {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+    text-align: center;
+    background-color: thistle;
+  }
+
+  button {
+    background-color: maroon;
+    color: white;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+    border:4px solid rgb(90, 205, 171);
+    padding: 15px;
+    text-align: center;
+
+  }
