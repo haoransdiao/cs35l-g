@@ -71,6 +71,14 @@ $(document).ready(function (e) {
 			window.localStorage.removeItem("chromashare-token");
 			location.reload();
 		});
+		// Random photo redirect
+		$("#r_photo").on('click', function() {
+			var account = api_get('/api/accdatan',{'login_name': token.login_name});
+			var candidates = account.image_oids;
+			var oid = candidates[Math.floor(Math.random()*candidates.length)];
+			redirect = "/build/image.html?oid=" + oid;
+			window.location.replace(redirect);
+		});
 		// Create Tag -----------------------------------------
 		$('#ctg').on('click', async function() {
 			var title = $('#tgtitle').prop('value');
