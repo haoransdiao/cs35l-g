@@ -7,21 +7,39 @@ Requirements:
 	mongodb 5.0.4-1+
 	python-pymongo-3.12.1-1 (archlinux package listed here, on pip it's just
 	pymongo)
-	opencv 4.5.4-6+, including the opencv python library
 	jquery 3.6.0, included in backend/
-	craco installed through npm
+Relevant Files:
+	All code that is actually used in our project is contained within
+	backend/
+	
+	Backend code is in backend/backend.py backend/mongo_wrapper.py and backend/auth.py
+	
+	Frontend code is in backend/build/*html backend/build/*css backend/build/*js
+
+	Persistant storage is in backend/db and backend/imageraw
+
+	ATTENTION: the folder chromashare contains a react frontend that is not
+	used by our project
 Deploy Instructions
 	Mongodb-------------------------------------------------
 	to start the mongodb process, database files are in db
 	# mongod --dbpath /backend/db
 	for access to mongodb shell
 	$ mongo
+	You can also start with a clean db as long as you create the
+	collections:
+		tags
+		imagedata
+		accounts
+		tokens
+
+	for instructions on how to shutdown the database, see backend/db-notes
 	Backend--------------------------------------------------
+	It just runs
 	# ./backend/backend.py
 
 	Frontend------------------------------------------------
-	npm run build to build the frontend, it will be served by the backend
-	from frontend/build, which has been symbolic linked
+	The front end does not need to be deployed, it is served by 
+	the backend
 
 
-pip install "pymongo[srv]"
