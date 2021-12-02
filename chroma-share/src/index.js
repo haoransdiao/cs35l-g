@@ -8,6 +8,7 @@ import Signup from './Signup';
 import Home from './Home';
 import Signin from './Signin';
 import Upload from './Upload';
+import Search from './Search';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.render(
       <Route path='/home' element={<Home/>} />
       <Route path="/signin" element={<Signin/>} />
       <Route path="/upload" element={<Upload/>} />
+      <Route path="/search" element={<Search/>} />
   </Routes>
     </BrowserRouter>
   </React.StrictMode>,

@@ -2,7 +2,7 @@ import Navbarlogged from "./Navbarlogged";
 import Footer from "./Footer";
 import { Component } from "react";
 import $ from 'jquery';
-
+import Cookies from 'js-cookie';
 
 class Upload extends Component {
 
@@ -42,6 +42,7 @@ class Upload extends Component {
             type: this.state.imageType,
             data: this.state.image,
             is_public: this.state.isPublic,
+            token: Cookies.get('token')
         }
 
         console.log(data);
