@@ -155,6 +155,31 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 		#writes back the json data
 		self.common_headers("application/json")
 		self.wfile.write(bytes(json.dumps(image_json),"UTF-8"))
+	#gets search data
+	def handle_search(self, r):
+		return_object = [];
+		#instantiates a mongo wrapper
+		mw = mongo_wrapper.MongoWrapper()
+		try:
+			title = r['title']
+			self.log_message("Searching for title %s", title)
+			#gets results as a cursor
+			image_jsons = mw.search_image(title, None)
+			if image_jsons == None:
+				return;
+			#processes each individual image json
+			for image_json in image_jsons:
+				#change oid objects to strings, otherwize they can't be
+				#jsonified
+				image_json['_id'] = str(image_json['_id'])
+				print(image_json)
+				return_object.append(image_json)	
+		except:
+			self.send_error(400, message="malformed JSON")
+			return
+		#writes back the json data
+		self.common_headers("application/json")
+		self.wfile.write(bytes(json.dumps(return_object),"UTF-8"))
 	#gets info about tags
 	def handle_get_tag(self, r):
 		#instantiates a mongo wrapper
@@ -355,6 +380,8 @@ class RequestHandler(hs.BaseHTTPRequestHandler):
 			self.handle_create_login(r)
 		elif (self.path == "/api/login"):
 			self.handle_login(r)
+		elif (self.path == "/api/search"):
+			self.handle_search(r)
 			
 		#if the POST isn't to login or upload an image, it is invalid
 		else:

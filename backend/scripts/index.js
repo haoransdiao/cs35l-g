@@ -66,6 +66,7 @@ $(document).ready(function (e) {
 				},
 			});
 		});
+
 		// Signout implmentation ------------------------------
 		$("#signout").on('click', function() {
 			window.localStorage.removeItem("chromashare-token");
@@ -143,6 +144,15 @@ $(document).ready(function (e) {
 					alert("failed to create tag");
 				},
 			});
+		});
+
+		// Search-----------------------------------------
+		$('#search').on('click', async function() {
+			var search_title = $('#search_title').prop('value');
+			results = api_get('/api/search',{"title": search_title});
+			for (i in results) {
+				$("#image_carrier")[0].innerHTML += render_image_pre(results[i]._id);
+			}
 		});
 
 });
