@@ -23,7 +23,7 @@ Relevant Files:
 Deploy Instructions
 	Mongodb-------------------------------------------------
 	to start the mongodb process, database files are in db
-	# mongod --dbpath /backend/db
+	# mongod --dbpath backend/db
 	for access to mongodb shell
 	$ mongo
 	You can also start with a clean db as long as you create the
@@ -46,4 +46,19 @@ Deploy Instructions
 	The app is hosted on localhost:8000, although with port forwarding it
 	should work on the open web
 
+	Instructions for How to Use------------------------------------------
+	-click on search to search through all photos uploaded by all userss
+	
+	-click register with a login and password to register an account
+	
+	-click login with the same prompts to login, sign out to sign out
+	Your images and tags will now show up on your home page
 
+	-click upload to upload an image (must be logged in)
+
+	-click create tag to create a tag (must be logged in)
+
+	-click on any image to see the tags it has attached, and to attach more
+	tags (you must be the owner of the image)
+
+	-click on any tag to see the images it has been attached to
