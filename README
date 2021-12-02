@@ -42,4 +42,8 @@ Deploy Instructions
 	The front end does not need to be deployed, it is served by 
 	the backend
 
+	Access---------------------------------------------------------------
+	The app is hosted on localhost:8000, although with port forwarding it
+	should work on the open web
+
 
